@@ -5,13 +5,22 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        fetch-depth: 0
 
     - name: Setup Hugo
       uses: peaceiris/actions-hugo@v2
