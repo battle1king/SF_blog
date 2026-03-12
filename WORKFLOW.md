@@ -2,40 +2,25 @@
 
 ## 项目概述
 
-这是一个基于 **Hugo** 静态网站生成器的博客项目，使用 `hugo-theme-den` 主题，通过 **GitHub Actions** 自动部署到 **GitHub Pages**。
+这是一个基于 **Hugo** 静态网站生成器的博客项目，使用 `hugo-theme-cleanwhite` 主题，通过 **GitHub Actions** 自动部署到 **GitHub Pages**。
 
 - **仓库地址**: https://github.com/battle1king/SF_blog
 - **网站地址**: https://battle1king.github.io/SF_blog/
 
 ---
 
-## 你还需要做的事情（首次部署清单）
-
-### 1. 启用 GitHub Pages
-
-1. 打开 https://github.com/battle1king/SF_blog/settings/pages
-2. **Source** 选择 `Deploy from a branch`
-3. **Branch** 选择 `gh-pages`，文件夹选 `/ (root)`
-4. 点击 **Save**
-
-> 如果还没有 `gh-pages` 分支，等第一次 Action 成功运行后会自动创建。
-
-### 2. 确认 baseURL 已修改
-
-确保 `config.toml` 和 `hugo.toml` 中的 `baseURL` 已改为：
-```
-https://battle1king.github.io/SF_blog/
-```
-> 如果以后绑定了自己的域名（如 `https://blog.example.com`），需要把 baseURL 改为你的域名。
-
-### 3. 个性化配置
+## 个性化配置
 
 编辑 `config.toml`，修改以下内容：
 - `title` — 网站标题
-- `[author] name` — 你的名字
+- `SEOTitle` — 浏览器标签页显示的标题
 - `description` — 网站描述
-- `[languages.en.menu.social]` — 你的社交链接
-- `[languages.en.menu.links]` — 你的友链
+- `slogan` — 首页大图上的标语
+- `header_image` — 首页背景大图（放在 `static/img/` 下）
+- `sidebar_about_description` — 侧边栏简介
+- `sidebar_avatar` — 侧边栏头像（放在 `static/img/` 下）
+- `[params.social]` — 你的社交链接（GitHub、邮箱等）
+- `[[params.additional_menus]]` — 导航栏菜单项
 
 ---
 
@@ -45,10 +30,10 @@ https://battle1king.github.io/SF_blog/
 
 ```bash
 # 1. 创建新文章（会自动生成模板）
-hugo new en/posts/my-new-post.md
+hugo new post/my-new-post.md
 
 # 2. 编辑文章
-#    用 VS Code 打开 content/en/posts/my-new-post.md 进行编辑
+#    用 VS Code 打开 content/post/my-new-post.md 进行编辑
 #    注意：文章头部的 draft: true 需要改为 draft: false 才会发布
 
 # 3. 本地预览（可选）
@@ -68,8 +53,9 @@ git push
 ```markdown
 ---
 title: "文章标题"
-date: 2026-03-12
+date: 2026-03-13
 draft: false
+image: "img/post-bg-example.jpg"
 categories:
   - notes
 tags:
@@ -78,10 +64,16 @@ tags:
 ---
 
 正文内容从这里开始...
+
+<!--more-->
+
+正文的其余部分（more 之前的内容会显示为摘要）
 ```
 
 - `draft: true` → 草稿，不会发布
 - `draft: false` → 正式发布
+- `image` → 文章头图（可选，放在 `static/img/` 下）
+- `<!--more-->` → 摘要分隔符，之前的内容显示在首页列表
 
 ---
 
@@ -89,8 +81,7 @@ tags:
 
 | 命令 | 说明 |
 |------|------|
-| `hugo new en/posts/xxx.md` | 创建英文新文章 |
-| `hugo new zh-tw/posts/xxx.md` | 创建繁体中文新文章 |
+| `hugo new post/xxx.md` | 创建新文章 |
 | `hugo server -D` | 本地预览（含草稿） |
 | `hugo server` | 本地预览（不含草稿） |
 | `hugo` | 生成静态文件到 `public/` |
@@ -116,22 +107,18 @@ tags:
 
 ```
 SF_blog/
-├── config.toml              # 主配置文件（网站设置、菜单、语言等）
-├── hugo.toml                # Hugo 基础配置
+├── config.toml              # 主配置文件（网站设置、菜单、主题参数等）
 ├── content/                 # 文章内容
-│   ├── en/                  # 英文内容
-│   │   ├── about.md         # 关于页面
-│   │   └── posts/           # 文章目录
-│   └── zh-tw/               # 繁体中文内容
-│       ├── about.md
-│       └── posts/
-├── static/                  # 静态资源（图片等）
-│   └── images/              # 放你的图片
+│   ├── post/                # 博客文章目录（cleanwhite 主题用 post/）
+│   └── about.md             # 关于页面
+├── static/                  # 静态资源
+│   ├── img/                 # 图片（头图、头像、背景等）
+│   └── images/              # 其他图片
 ├── themes/                  # 主题（Git 子模块）
-│   └── hugo-theme-den/
-├── public/                  # 生成的静态文件（不需要手动修改）
+│   └── hugo-theme-cleanwhite/
 ├── .github/workflows/
 │   └── gh-pages.yml         # GitHub Actions 自动部署配置
+├── .gitignore               # Git 忽略规则（public/ 等）
 └── WORKFLOW.md              # 本文件
 ```
 
@@ -139,10 +126,14 @@ SF_blog/
 
 ## 添加图片
 
-1. 将图片放到 `static/images/` 目录下
+1. 将图片放到 `static/img/` 目录下
 2. 在文章中引用：
    ```markdown
-   ![图片描述](/SF_blog/images/my-image.jpg)
+   ![图片描述](/SF_blog/img/my-image.jpg)
+   ```
+3. 设置文章头图（在 front matter 中）：
+   ```yaml
+   image: "img/my-image.jpg"
    ```
 
 ---
@@ -154,7 +145,7 @@ SF_blog/
 2. 如果失败，点击进去查看错误日志
 
 ### Q: 本地预览正常但线上样式不对？
-检查 `config.toml` 里的 `baseURL` 是否正确设置为 `https://battle1king.github.io/SF_blog/`
+检查 `config.toml` 里的 `baseurl` 是否正确设置为 `https://battle1king.github.io/SF_blog/`
 
 ### Q: 文章写了但网站上看不到？
 检查文章头部的 `draft` 是否设为 `false`
@@ -162,4 +153,4 @@ SF_blog/
 ### Q: 如何绑定自定义域名？
 1. 在 GitHub 仓库 Settings → Pages → Custom domain 填入你的域名
 2. 在域名 DNS 中添加 CNAME 记录指向 `battle1king.github.io`
-3. 修改 `config.toml` 和 `hugo.toml` 中的 `baseURL` 为你的域名
+3. 修改 `config.toml` 中的 `baseurl` 为你的域名
